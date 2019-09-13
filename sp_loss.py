@@ -4,8 +4,11 @@ import torch.nn.functional as F
 
 
 """
-Content and Colour Distillation for Learning Image Translations with the Spatial Profile Loss
-https://arxiv.org/abs/1908.00274
+This is an implementation of
+"Content and Colour Distillation for Learning Image Translations with the Spatial Profile Loss"
+(https://arxiv.org/abs/1908.00274).
+
+It is taken from here:
 https://github.com/ssarfraz/SPL/blob/master/SPL_Loss/pytorch_spl_loss.py
 """
 

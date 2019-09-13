@@ -16,7 +16,7 @@ class Generator(nn.Module):
                 before applying resnet blocks.
             num_blocks: an integer, number of resnet blocks.
         """
-        super(GlobalGenerator, self).__init__()
+        super(Generator, self).__init__()
 
         # BEGINNING
 

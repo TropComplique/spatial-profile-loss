@@ -32,13 +32,6 @@ SAVE_EPOCH = 10
 PLOT_IMAGE_STEP = 500
 PLOT_LOSS_STEP = 10
 
-IS_SECOND_STAGE = False
-if IS_SECOND_STAGE:
-    CHECKPOINT = os.path.join(MODELS_DIR, MODEL_NAME + f'_epoch_{NUM_EPOCHS}')
-    MODEL_NAME += '_second_stage'
-    NUM_EPOCHS = 30
-    SIZE = (2 * SIZE[0], 2 * SIZE[1])
-
 
 class Simplifier:
 
@@ -86,9 +79,7 @@ def main():
 
     log_dir = os.path.join(LOGS_DIR, MODEL_NAME)
     writer = SummaryWriter(log_dir)
-
     dataset = Images(folder=DATA, size=SIZE, method=METHOD)
-    # dataset = FewImages(DATA, size=512, num_samples=1000)
 
     data_loader = DataLoader(
         dataset=dataset, batch_size=BATCH_SIZE,
@@ -97,11 +88,7 @@ def main():
     )
     num_steps = NUM_EPOCHS * (len(dataset) // BATCH_SIZE)
 
-    model = pix2pix(
-        device=DEVICE, num_steps=num_steps,
-        with_enhancer=IS_SECOND_STAGE,
-        checkpoint=CHECKPOINT if IS_SECOND_STAGE else None
-    )
+    model = Model(device=DEVICE, num_steps=num_steps)
     simplifier = Simplifier()
 
     representations = []
