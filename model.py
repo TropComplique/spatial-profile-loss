@@ -48,9 +48,9 @@ class Model:
         def lambda_rule(i):
             decay = num_steps // 10
             m = 1.0 if i < decay else 1.0 - (i - decay) / (num_steps - decay)
-            return max(m, 0.0)
+            return max(m, 1e-3)
 
-        self.optimizer = optim.Adam(self.G.parameters(), lr=1e-3, betas=(0.5, 0.999))
+        self.optimizer = optim.Adam(self.G.parameters(), lr=7e-4, betas=(0.9, 0.999))
         self.scheduler = LambdaLR(self.optimizer, lr_lambda=lambda_rule)
 
         self.cp_loss = CPLoss()
@@ -85,7 +85,7 @@ class Model:
         if not USE_FLOAT16:
             reconstruction_loss.backward()
         else:
-            with amp.scale_loss(generator_loss, self.optimizer['G'], loss_id=0) as loss_scaled:
+            with amp.scale_loss(reconstruction_loss, self.optimizer) as loss_scaled:
                 loss_scaled.backward()
 
         self.optimizer.step()
