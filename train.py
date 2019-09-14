@@ -19,7 +19,7 @@ cudnn.benchmark = True
 MODELS_DIR = 'models/'
 LOGS_DIR = 'summaries/'
 
-BATCH_SIZE = 10  # float16 training
+BATCH_SIZE = 6  # 10 for float16 training
 DATA = '/home/dan/datasets/feidegger/images/'
 NUM_EPOCHS = 50
 SIZE = (480, 320)  # height and width

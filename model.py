@@ -10,7 +10,7 @@ from generator import Generator
 from sp_loss import CPLoss, GPLoss
 
 
-USE_FLOAT16 = True
+USE_FLOAT16 = False
 if USE_FLOAT16:
     from apex import amp
 
