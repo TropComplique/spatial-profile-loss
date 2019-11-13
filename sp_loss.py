@@ -71,6 +71,8 @@ class CPLoss(nn.Module):
 
     def forward(self, x, y):
         """
+        It returns a value in [-12, 12] range.
+
         Arguments:
             x, y: float tensors with shape [b, 3, h, w].
         Returns:
@@ -93,7 +95,7 @@ class SPLoss(nn.Module):
 
     def forward(self, x, y):
         """
-        It returns value in [-c, c] range.
+        It returns a value in [-c, c] range.
 
         Arguments:
             x, y: float tensors with shape [b, c, h, w].
@@ -105,5 +107,11 @@ class SPLoss(nn.Module):
         cols = F.normalize(x, p=2, dim=2) * F.normalize(y, p=2, dim=2)
         rows = F.normalize(x, p=2, dim=3) * F.normalize(y, p=2, dim=3)
         # they have shape [b, c, h, w]
+
+        cols = cols.sum(2)  # shape [b, c, w]
+        rows = rows.sum(3)  # shape [b, c, h]
+
+        # `cols` represent cosine similarities between columns,
+        # `rows` represent cosine similarities between rows
 
         return (-1.0/b) * ((1.0/w) * cols.sum() + (1.0/h) * rows.sum())

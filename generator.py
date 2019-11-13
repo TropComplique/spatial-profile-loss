@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class Generator(nn.Module):
 
-    def __init__(self, in_channels, out_channels, depth=64, downsample=4, num_blocks=9):
+    def __init__(self, in_channels, out_channels, depth=64, downsample=3, num_blocks=9):
         """
         Arguments:
             in_channels: an integer.
@@ -21,8 +21,7 @@ class Generator(nn.Module):
         # BEGINNING
 
         start = nn.Sequential(
-            nn.ReflectionPad2d(3),
-            nn.Conv2d(in_channels, depth, kernel_size=7, bias=False),
+            nn.Conv2d(in_channels, depth, kernel_size=7, bias=False, padding=3),
             nn.InstanceNorm2d(depth, affine=True),
             nn.ReLU(inplace=True)
         )
@@ -52,8 +51,7 @@ class Generator(nn.Module):
         # END
 
         self.end = nn.Sequential(
-            nn.ReflectionPad2d(3),
-            nn.Conv2d(depth, out_channels, kernel_size=7),
+            nn.Conv2d(depth, out_channels, kernel_size=7, padding=3),
             nn.Tanh()
         )
 
@@ -90,10 +88,9 @@ class Downsample(nn.Module):
 
         params = {
             'kernel_size': 3, 'stride': 2,
-            'padding': 0, 'bias': False
+            'padding': 1, 'bias': False
         }
 
-        self.pad = nn.ReflectionPad2d(1)
         self.conv = nn.Conv2d(d, 2 * d, **params)
         self.norm = nn.InstanceNorm2d(2 * d, affine=True)
         self.relu = nn.ReLU(inplace=True)
@@ -106,7 +103,6 @@ class Downsample(nn.Module):
             a float tensor with shape [b, 2 * d, h / 2, w / 2].
         """
 
-        x = self.pad(x)
         x = self.conv(x)
         x = self.norm(x)
         x = self.relu(x)
@@ -121,10 +117,9 @@ class Upsample(nn.Module):
 
         params = {
             'kernel_size': 3, 'stride': 1,
-            'padding': 0, 'bias': False
+            'padding': 1, 'bias': False
         }
 
-        self.pad = nn.ReflectionPad2d(1)
         self.conv = nn.Conv2d(d, d // 2, **params)
         self.norm = nn.InstanceNorm2d(d // 2, affine=True)
         self.relu = nn.ReLU(inplace=True)
@@ -138,7 +133,6 @@ class Upsample(nn.Module):
         """
 
         x = F.interpolate(x, scale_factor=2, mode='bilinear', align_corners=False)
-        x = self.pad(x)
         x = self.conv(x)
         x = self.norm(x)
         x = self.relu(x)
@@ -151,13 +145,11 @@ class ResnetBlock(nn.Module):
     def __init__(self, d):
         super(ResnetBlock, self).__init__()
 
-        self.pad1 = nn.ReflectionPad2d(1)
-        self.conv1 = nn.Conv2d(d, d, kernel_size=3, bias=False)
+        self.conv1 = nn.Conv2d(d, d, kernel_size=3, bias=False, padding=1)
         self.norm1 = nn.InstanceNorm2d(d, affine=True)
         self.relu1 = nn.ReLU(inplace=True)
 
-        self.pad2 = nn.ReflectionPad2d(1)
-        self.conv2 = nn.Conv2d(d, d, kernel_size=3, bias=False)
+        self.conv2 = nn.Conv2d(d, d, kernel_size=3, bias=False, padding=1)
         self.norm2 = nn.InstanceNorm2d(d, affine=True)
 
     def forward(self, x):
@@ -168,12 +160,10 @@ class ResnetBlock(nn.Module):
             a float tensor with shape [b, d, h, w].
         """
 
-        y = self.pad1(x)
-        y = self.conv1(y)
+        y = self.conv1(x)
         y = self.norm1(y)
         y = self.relu1(y)
 
-        y = self.pad2(y)
         y = self.conv2(y)
         y = self.norm2(y)
 

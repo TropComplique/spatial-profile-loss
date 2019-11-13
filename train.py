@@ -1,8 +1,8 @@
 import os
-import numpy as np
-import cv2
-import skimage
 import time
+import cv2
+import numpy as np
+import skimage.filters
 
 import torch
 import torch.nn as nn

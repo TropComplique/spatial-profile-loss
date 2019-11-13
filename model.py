@@ -15,16 +15,6 @@ if USE_FLOAT16:
     from apex import amp
 
 
-def accumulate(model_accumulator, model, decay=0.99):
-    """Exponential moving average."""
-
-    params = dict(model.named_parameters())
-    ema_params = dict(model_accumulator.named_parameters())
-
-    for k in params.keys():
-        ema_params[k].data.mul_(decay).add_(1.0 - decay, params[k].data)
-
-
 class Model:
 
     def __init__(self, device, num_steps):
@@ -42,7 +32,7 @@ class Model:
                 init.ones_(m.weight)
                 init.zeros_(m.bias)
 
-        G = Generator(a, b, depth=64, downsample=3, num_blocks=9)
+        G = Generator(a, b)
         self.G = G.apply(weights_init).to(device)
 
         def lambda_rule(i):
@@ -50,7 +40,7 @@ class Model:
             m = 1.0 if i < decay else 1.0 - (i - decay) / (num_steps - decay)
             return max(m, 1e-3)
 
-        self.optimizer = optim.Adam(self.G.parameters(), lr=7e-4, betas=(0.9, 0.999))
+        self.optimizer = optim.Adam(self.G.parameters(), lr=2e-4, betas=(0.5, 0.999))
         self.scheduler = LambdaLR(self.optimizer, lr_lambda=lambda_rule)
 
         self.cp_loss = CPLoss()
@@ -104,3 +94,13 @@ class Model:
     def save_model(self, model_path):
         torch.save(self.G.state_dict(), model_path + '_generator.pth')
         torch.save(self.G_ema.state_dict(), model_path + '_generator_ema.pth')
+
+
+def accumulate(model_accumulator, model, decay=0.99):
+    """Exponential moving average."""
+
+    params = dict(model.named_parameters())
+    ema_params = dict(model_accumulator.named_parameters())
+
+    for k in params.keys():
+        ema_params[k].data.mul_(decay).add_(1.0 - decay, params[k].data)
