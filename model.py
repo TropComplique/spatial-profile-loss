@@ -10,7 +10,7 @@ from generator import Generator
 from sp_loss import CPLoss, GPLoss
 
 
-USE_FLOAT16 = False
+USE_FLOAT16 = True
 if USE_FLOAT16:
     from apex import amp
 
@@ -40,7 +40,7 @@ class Model:
             m = 1.0 if i < decay else 1.0 - (i - decay) / (num_steps - decay)
             return max(m, 1e-3)
 
-        self.optimizer = optim.Adam(self.G.parameters(), lr=2e-4, betas=(0.5, 0.999))
+        self.optimizer = optim.Adam(self.G.parameters(), lr=1e-3, betas=(0.5, 0.999))
         self.scheduler = LambdaLR(self.optimizer, lr_lambda=lambda_rule)
 
         self.cp_loss = CPLoss()

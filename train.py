@@ -19,17 +19,17 @@ cudnn.benchmark = True
 MODELS_DIR = 'models/'
 LOGS_DIR = 'summaries/'
 
-BATCH_SIZE = 6  # 10 for float16 training
-DATA = '/home/dan/datasets/feidegger/images/'
+BATCH_SIZE = 32  # 20 for float16 training
+DATA = '/home/dan/datasets/four_styles/images/'
 NUM_EPOCHS = 50
-SIZE = (480, 320)  # height and width
-METHOD = 'easy'  # 'easy' or 'hard'
+SIZE = (256, 256)  # height and width
+METHOD = 'hard'  # 'easy' or 'hard'
 
 DEVICE = torch.device('cuda:0')
 MODEL_NAME = 'run00'
 
-SAVE_EPOCH = 10
-PLOT_IMAGE_STEP = 500
+SAVE_EPOCH = 5
+PLOT_IMAGE_STEP = 50
 PLOT_LOSS_STEP = 10
 
 
