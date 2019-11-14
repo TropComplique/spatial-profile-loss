@@ -22,7 +22,7 @@ class Generator(nn.Module):
 
         start = nn.Sequential(
             nn.Conv2d(in_channels, depth, kernel_size=7, bias=False, padding=3),
-            nn.InstanceNorm2d(depth, affine=True),
+            nn.BatchNorm2d(depth),
             nn.ReLU(inplace=True)
         )
 
@@ -92,7 +92,7 @@ class Downsample(nn.Module):
         }
 
         self.conv = nn.Conv2d(d, 2 * d, **params)
-        self.norm = nn.InstanceNorm2d(2 * d, affine=True)
+        self.norm = nn.BatchNorm2d(2 * d)
         self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x):
@@ -121,7 +121,7 @@ class Upsample(nn.Module):
         }
 
         self.conv = nn.Conv2d(d, d // 2, **params)
-        self.norm = nn.InstanceNorm2d(d // 2, affine=True)
+        self.norm = nn.BatchNorm2d(d // 2)
         self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x):
@@ -146,11 +146,11 @@ class ResnetBlock(nn.Module):
         super(ResnetBlock, self).__init__()
 
         self.conv1 = nn.Conv2d(d, d, kernel_size=3, bias=False, padding=1)
-        self.norm1 = nn.InstanceNorm2d(d, affine=True)
+        self.norm1 = nn.BatchNorm2d(d)
         self.relu1 = nn.ReLU(inplace=True)
 
         self.conv2 = nn.Conv2d(d, d, kernel_size=3, bias=False, padding=1)
-        self.norm2 = nn.InstanceNorm2d(d, affine=True)
+        self.norm2 = nn.BatchNorm2d(d)
 
     def forward(self, x):
         """

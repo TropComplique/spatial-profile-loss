@@ -19,7 +19,7 @@ cudnn.benchmark = True
 MODELS_DIR = 'models/'
 LOGS_DIR = 'summaries/'
 
-BATCH_SIZE = 32  # 20 for float16 training
+BATCH_SIZE = 32  # 32 for float16 training
 DATA = '/home/dan/datasets/four_styles/images/'
 NUM_EPOCHS = 50
 SIZE = (256, 256)  # height and width
@@ -128,10 +128,12 @@ def main():
 
             if i % PLOT_IMAGE_STEP == 0:
 
+                model.G.eval()
                 for j, A in enumerate(representations):
                     with torch.no_grad():
                         B = model.G(A)
                     writer.add_image(f'sample_{j}', B[0].cpu(), i)
+                model.G.train()
 
             if i % PLOT_LOSS_STEP == 0:
 
