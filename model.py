@@ -35,12 +35,15 @@ class Model:
         G = Generator(a, b).train()
         self.G = G.apply(weights_init).to(device)
 
+        # it turns out that this is important
+        init.normal_(self.G.end[0].weight, std=1e-4)
+
         def lambda_rule(i):
-            decay = num_steps // 5
+            decay = num_steps // 4
             m = 1.0 if i < decay else 1.0 - (i - decay) / (num_steps - decay)
             return max(m, 1e-3)
 
-        self.optimizer = optim.Adam(self.G.parameters(), lr=2e-4, betas=(0.5, 0.999))
+        self.optimizer = optim.Adam(self.G.parameters(), lr=2e-4, betas=(0.9, 0.999))
         self.scheduler = LambdaLR(self.optimizer, lr_lambda=lambda_rule)
 
         self.cp_loss = CPLoss()

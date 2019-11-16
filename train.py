@@ -21,15 +21,15 @@ LOGS_DIR = 'summaries/'
 
 BATCH_SIZE = 32  # 32 for float16 training
 DATA = '/home/dan/datasets/four_styles/images/'
-NUM_EPOCHS = 50
+NUM_EPOCHS = 100
 SIZE = (256, 256)  # height and width
 METHOD = 'hard'  # 'easy' or 'hard'
 
 DEVICE = torch.device('cuda:0')
 MODEL_NAME = 'run00'
 
-SAVE_EPOCH = 5
-PLOT_IMAGE_STEP = 50
+SAVE_EPOCH = 20
+PLOT_IMAGE_STEP = 200
 PLOT_LOSS_STEP = 10
 
 
